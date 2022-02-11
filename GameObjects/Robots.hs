@@ -60,7 +60,7 @@ reassignRobots _ _ [] _ _ = error "Not enough robots!!!"
 reassignRobots posList@(x:rest) state ((pos, flag, plan):robots) board newRobots =
     let (st, _) = matrixIndexAccess board pos
     in if st == state
-        then reassignRobots rest state robots board ((x, flag, plan):newRobots)
+        then reassignRobots rest state robots board ((x, flag, []):newRobots)
         else reassignRobots posList state robots board newRobots
 
 
@@ -209,9 +209,50 @@ headToD (x:_) board (pos,flag,_) = moveR board pos x (stateToMove board x flag) 
 
 
 
+-- ###########################################################
 
 
 
--- this method describes the movement of proactive robots
+-- this method goes through every robot, making it move
 moveProactive :: Board -> [Robot] -> (Board, [Robot])
-moveProactive board robots = (board, robots)
+moveProactive board [] = (board, [])
+moveProactive board (r:robots) =
+    let (board', robot) = moveProactiveRobot board r;
+        (newBoard, newRobots) = moveProactive board' robots
+    in (newBoard, robot:newRobots)
+
+
+moveProactiveRobot :: Board -> Robot -> (Board, Robot)
+moveProactiveRobot board robot@(pos, flag, plan)
+    | isDirty cell = 
+        let newBoard = clean cell board
+        in (newBoard, robot)
+    | flag && arriveToCorral cell = moveProactiveRobot board (pos, False, [])
+    | null plan || not (robotValidCell (head plan) board) =
+        let newPlan = decidePlan board robot
+        in if null newPlan
+            then (board, (pos, flag, []))
+            else moveProactiveRobot board (pos, flag, newPlan)
+    | otherwise =
+        let newPos = head plan;
+            (nextState,_) = matrixIndexAccess board newPos;
+            willCarryBaby = nextState == B;
+            newFlag = flag || willCarryBaby
+            (newBoard, newRobot) = moveR board pos newPos (stateToMove board newPos flag) newFlag (tail plan)
+        in if not flag && willCarryBaby
+            then (newBoard, (newPos, newFlag, []))
+            else (newBoard, newRobot)
+    where cell = matrixIndexAccess board pos
+
+arriveToCorral :: Cell -> Bool
+arriveToCorral (state, _) = state == BRC
+
+decidePlan :: Board -> Robot -> Plan
+decidePlan board robot@(pos, flag, _)
+    | flag && reachableC = pathToC
+    | not flag && reachableB = pathToB
+    | reachableD = pathToD
+    | otherwise = []
+    where (reachableC, pathToC) = canReach C [(pos, (0, 0))] [] board
+          (reachableB, pathToB) = canReach B [(pos, (0, 0))] [] board
+          (reachableD, pathToD) = canReach D [(pos, (0, 0))] [] board

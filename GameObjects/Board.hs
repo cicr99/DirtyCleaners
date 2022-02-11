@@ -5,6 +5,7 @@ module GameObjects.Board
 , addCell
 , collectState
 , shuffleBoard
+, getAmountState
 , State(..)
 , Position
 , Cell

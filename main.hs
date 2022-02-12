@@ -38,7 +38,7 @@ main = do
     inputD <- getLine
     let d = read inputD :: Float
 
-    putStrLn "Please input the maximum amount of time you would like the simulation to last:"
+    putStrLn "Please input the maximum amount of turns you would like the simulation to last:"
     inputM <- getLine
     let m = read inputM :: Int
 

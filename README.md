@@ -21,14 +21,14 @@ This command will allow you to select the parameters of the execution:
 - Number of obstacles
 - Number of children (No need to provide the amount of corrals because it is the same number as the children)
 - Number of robots
-- The type of robot agent you would like to run (got to the description for a better understanding of these strategies):
+- The type of robot agent you would like to run (go to the description for a better understanding of these strategies):
   - 1 for a reactive robot
   - 2 for a proactive robot
 - Percentage of dirt in the initial board
 - The maximum amount of steps you would like the simulation to run
 - The number of simulations you would like to run
 
-After filling out these fields the program will executes the said simulations and youl get a message similar to this one:
+After filling out these fields the program will execute the said number of simulations and you'll get a message similar to this one:
 ```
 Simulation Results:
 Total simulations where the robots couldn't keep the house clean: 29
@@ -36,4 +36,4 @@ Total simulations where the robots managed to keep the children from generating 
 Average dirt percentage at the end: 61.490654
 ```
 
-You could also use the ghc's interactive mode by typing `ghci` on your terminal. After that you should run `:l main` to load all the functionalities of the project. After that you can call any method and watch the output.
+You could also use the ghc's interactive mode by typing `ghci` on your terminal. After that you should run `:l main` to load all the functionalities of the project, and once you've done that you'll be able to call any method and watch the output.
